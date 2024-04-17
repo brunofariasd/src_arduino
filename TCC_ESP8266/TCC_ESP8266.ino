@@ -5,6 +5,8 @@ This sketch connects the ESP8266 to a MQTT broker and subcribes to the topic
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
+#include <SoftwareSerial.h>
+SoftwareSerial ESPserial(2, 3); // RX | TX
 
 const char *ssid = "brisa-1470450";   // name of your WiFi network
 const char *password = "rmepsjew"; // password of the WiFi network
@@ -107,7 +109,16 @@ void reconnect() {
 
 
 void setup() {
-  Serial.begin(9600); // Start serial communication at 115200 baud
+  Serial.begin(9600); // Start serial communication at 9600 baud
+  ESPserial.begin(9600);
+  ESPserial.println("AT+IPR=9600");
+  delay(1000);
+
+  // Start the software serial for communication with the ESP8266
+  ESPserial.begin(9600);
+
+  Serial.println("Ready");
+  ESPserial.println("AT+GMR");
   delay(100);
   setup_wifi(); // Connect to network
   client.setServer(broker, 1883);
